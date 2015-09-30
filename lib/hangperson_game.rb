@@ -2,42 +2,39 @@ class HangpersonGame
 attr_accessor :word
 attr_accessor :guesses
 attr_accessor :wrong_guesses
-attr_accessor :wordGuesses
 
 def initialize(new_word)
     @word = new_word
     @guesses = ''
     @wrong_guesses = ''
-    @wordGuesses = ''
-    for x in 0...new_word.length
-        @wordGuesses += '-'
-    end
+
 end
 
 def guess(letter)
-    if not letter =~ (/[^A-Za-z]/)
+    if letter =~ (/[^A-Za-z]/)
         raise ArgumentError, "Your Input Is Not A Letter"
-    elsif self.guesses.include? letter or self.wrong_guesses.include? letter
+    end
+    if letter.nil? or letter == ""
+        raise ArgumentError, "Your Input Is Not A Letter"
+    end
+    letter.downcase!
+    if @guesses.include? letter or @wrong_guesses.include? letter
         false
-    elsif self.word.include? letter
-        add_correct(letter)
-        true
+    elsif @word.include? letter
+        @guesses << letter
     else
-        self.wrong_guesses = self.wrong_guesses + letter
+        @wrong_guesses << letter
     end
 end
 
-def add_correct(letter)
-    indices = (0 ... self.word.length).find_all { |i| self.world[x,1] == letter }
-    indices.each do |x|
-        self.wordGuesses[x] = letter
-    end
+def word_with_guesses
+    @word.gsub(/./) { |letter| @guesses.include?(letter) ? letter : '-' }
 end
 
 def check_win_or_lose
-    if self.wrong_guesses.length > 6
+    if @wrong_guesses.length > 6
         :lose
-    elsif !self.wordGuesses.include? '-'
+    elsif word_with_guesses == @word
         :win
     else
         :play
